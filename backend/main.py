@@ -1,7 +1,24 @@
+from contextlib import asynccontextmanager
+from typing import AsyncGenerator
+
 import uvicorn
 from fastapi import FastAPI
+from api import router as api_router
+from core.config import settings
+from core.models import db_manager
 
-app = FastAPI()
+
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator:
+    await db_manager.create_tables()
+    yield
+    await db_manager.dispose()
+
+app = FastAPI(lifespan=lifespan)
+app.include_router(
+    api_router,
+    prefix=settings.api.prefix
+)
 
 
 @app.get("/")
