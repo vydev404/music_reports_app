@@ -3,9 +3,10 @@ from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine, AsyncSession, async_sessionmaker
 
 from core.config import settings
+from core.models.base import Base
 
 
-class DatabaseManager():
+class DatabaseManager:
     def __init__(
             self,
             url: str,
@@ -36,6 +37,14 @@ class DatabaseManager():
     async def session_getter(self)-> AsyncGenerator[AsyncSession, None]:
         async with self.session_factory() as session:
             yield session
+
+    async def create_tables(self) -> None:
+        async with self.engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all)
+
+    async def delete_tables(self) -> None:
+        async with self.engine.begin() as conn:
+            await conn.run_sync(Base.metadata.drop_all)
 
 db_manager = DatabaseManager(
     url=str(settings.db.url),
