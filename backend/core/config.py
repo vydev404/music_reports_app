@@ -14,6 +14,10 @@ class ApiPrefixConfig(BaseModel):
 
 class DatabaseConfig(BaseModel):
     url: PostgresDsn #= f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+    echo: bool = True,
+    echo_pool: bool = False,
+    pool_size: int = 10,
+    max_overflow: int = 10,
 
 
 
