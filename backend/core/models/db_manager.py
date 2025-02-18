@@ -47,7 +47,7 @@ class DatabaseManager:
             await conn.run_sync(Base.metadata.drop_all)
 
 db_manager = DatabaseManager(
-    url=str(settings.db.url),
+    url=settings.db.get_url(),
     echo=settings.db.echo,
     echo_pool=settings.db.echo_pool,
     pool_size=settings.db.pool_size,
