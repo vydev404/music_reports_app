@@ -73,8 +73,10 @@ class SQLAlchemyRepository(AbstractRepository):
     async def update(self, model_id: int, values: dict):
         async with db_manager.session_getter() as session:
             result = await session.get(self.model, model_id)
-            result = result.update(values)
-            await session.refresh(result)
+            for k, v in values.items():
+                if hasattr(result, k):
+                    setattr(result, k, v)
             await session.commit()
+            await session.refresh(result)
             return result
 
