@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from sqlalchemy import insert, select
+from sqlalchemy import select
 
 from core.models import db_manager
 
@@ -28,10 +28,11 @@ class SQLAlchemyRepository(AbstractRepository):
 
     async def create(self, values: dict):
         async with db_manager.session_getter() as session:
-            stmt = insert(self.model).values(**values).returning(self.model.id)
-            result = await session.execute(stmt)
+            record = self.model(**values)
+            session.add(record)
             await session.commit()
-            return result.scalar_one()
+            await session.refresh(record)
+            return record
 
     async def get_by_id(self, model_id: int):
         async with db_manager.session_getter() as session:
@@ -52,3 +53,4 @@ class SQLAlchemyRepository(AbstractRepository):
             await session.refresh(result)
             await session.commit()
             return result
+
