@@ -46,16 +46,29 @@ class SQLAlchemyRepository(AbstractRepository):
             await session.refresh(record)
             return record
 
+    async def _get_all(self):
+        # Use only for tests
+        async with db_manager.session_getter() as session:
+            query = select(self.model).order_by(self.model.id.desc())
+            result = await session.execute(query)
+            return result.scalars().all()
+
     async def get_by_id(self, model_id: int):
         async with db_manager.session_getter() as session:
             return await session.get(self.model, model_id)
 
-    async def get_all(self):
+    async def get_many(self, limit: int = 100, offset: int = 0):
         async with db_manager.session_getter() as session:
-            query = select(self.model)
+            query = select(self.model).order_by(self.model.id.desc()).limit(limit).offset(offset)
             result = await session.execute(query)
-            result = [row[0].to_read_model() for row in result.all()]
-            return result
+            return result.scalars().all()
+
+    async def get_latest(self, last_n: int = 10):
+        async with db_manager.session_getter() as session:
+            query = select(self.model).order_by(self.model.id.desc()).limit(last_n)
+            result = await session.execute(query)
+            return result.scalars().all()
+
 
     async def update(self, model_id: int, values: dict):
         async with db_manager.session_getter() as session:
