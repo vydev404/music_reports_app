@@ -11,11 +11,23 @@ class AbstractRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
+    async def delete(self, model_id: int):
+        raise NotImplementedError
+
+    @abstractmethod
+    async def exists(self, model_id: int) -> bool:
+        raise NotImplementedError
+
+    @abstractmethod
     async def get_by_id(self, model_id: int):
         raise NotImplementedError
 
     @abstractmethod
-    async def get_all(self):
+    async def get_many(self, limit: int, offset: int = 0):
+        raise NotImplementedError
+
+    @abstractmethod
+    async def get_latest(self, last_n: int):
         raise NotImplementedError
 
     @abstractmethod
