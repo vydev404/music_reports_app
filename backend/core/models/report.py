@@ -1,7 +1,6 @@
 import json
-from tkinter import Text
 
-from sqlalchemy import ForeignKey
+from sqlalchemy import ForeignKey, Text
 from sqlalchemy.orm import Mapped, relationship, mapped_column
 
 from core.models import Base
@@ -9,6 +8,7 @@ from core.models import Base
 
 class Report(Base):
     __tablename__ = "reports"
+
     name: Mapped[str]
     file: Mapped[str]
 
