@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from sqlalchemy import select
+from sqlalchemy import select, delete
 
 from core.models import db_manager
 
@@ -45,6 +45,19 @@ class SQLAlchemyRepository(AbstractRepository):
             await session.commit()
             await session.refresh(record)
             return record
+
+    async def delete(self, model_id: int):
+        async with db_manager.session_getter() as session:
+            stmt = delete(self.model).where(self.model.id == model_id)
+            result = await session.execute(stmt)
+            await session.commit()
+            return result.rowcount > 0
+
+    async def exists(self, model_id: int) -> bool:
+        async with db_manager.session_getter() as session:
+            query = select(self.model).where(self.model.id == model_id)
+            result = await session.execute(query)
+            return result.scalar_one_or_none() is not None
 
     async def _get_all(self):
         # Use only for tests
