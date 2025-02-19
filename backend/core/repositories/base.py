@@ -36,8 +36,7 @@ class SQLAlchemyRepository(AbstractRepository):
 
     async def get_by_id(self, model_id: int):
         async with db_manager.session_getter() as session:
-            result = await session.get(self.model, model_id)
-            return result
+            return await session.get(self.model, model_id)
 
     async def get_all(self):
         async with db_manager.session_getter() as session:
