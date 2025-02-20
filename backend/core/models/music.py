@@ -1,4 +1,4 @@
-from sqlalchemy import String
+from sqlalchemy import String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
 
 from core.models import Base
@@ -13,4 +13,4 @@ class Music(Base):
     album: Mapped[str] = mapped_column(String(64), nullable=True)
     right_holder: Mapped[str] = mapped_column(String(64), nullable=False)
     path: Mapped[str] = mapped_column(String(255), nullable=False)
-    is_alive: Mapped[bool]
+    is_alive: Mapped[bool] = mapped_column(Boolean, default=True)

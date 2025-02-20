@@ -1,6 +1,6 @@
 import json
 
-from sqlalchemy import ForeignKey, Text
+from sqlalchemy import ForeignKey, Text, String
 from sqlalchemy.orm import Mapped, relationship, mapped_column
 
 from core.models import Base
@@ -9,12 +9,12 @@ from core.models import Base
 class Report(Base):
     __tablename__ = "reports"
 
-    name: Mapped[str]
-    file: Mapped[str]
+    name: Mapped[str] = mapped_column(String(255), nullable=False)
+    file: Mapped[str] = mapped_column(String(255), nullable=False)
 
-    source_file_id: Mapped[int] = mapped_column(ForeignKey("processed_files.id", ondelete="CASCADE"))
-    source_file: Mapped["ParsedFile"] = relationship("ParsedFile", back_populates="reports")
-    used_music_ids: Mapped[str] = mapped_column(Text, nullable=True, default="[]")
+    source_file_id: Mapped[int] = mapped_column(ForeignKey("source_files.id", ondelete="CASCADE"))
+    source_file: Mapped["SourceFile"] = relationship("SourceFile", back_populates="reports")
+    used_music_ids: Mapped[str] = mapped_column(Text, nullable=True, server_default="[]")
 
     @property
     def music_ids(self) -> list[int]:
