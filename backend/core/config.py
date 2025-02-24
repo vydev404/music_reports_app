@@ -14,6 +14,7 @@ class ApiPrefixConfig(BaseModel):
 
 class DatabaseConfig(BaseModel):
     url: PostgresDsn #= f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+    url_sync: PostgresDsn
     echo: bool = True
     echo_pool: bool = False
     pool_size: int = 10
@@ -21,6 +22,9 @@ class DatabaseConfig(BaseModel):
 
     def get_url(self):
         return str(self.url)
+
+    def get_url_sync(self):
+        return str(self.url_sync)
 
 
 
