@@ -37,6 +37,7 @@ class AbstractRepository(ABC):
 
 class SQLAlchemyRepository(AbstractRepository):
     model = None
+    db_manager = db_manager
 
     async def create(self, values: dict):
         async with db_manager.session_getter() as session:
