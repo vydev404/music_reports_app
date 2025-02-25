@@ -3,10 +3,10 @@ from typing import AsyncGenerator
 
 import uvicorn
 from fastapi import FastAPI
-from api import router as api_router
+
 from core.config import settings
 from core.models import db_manager
-
+from api.routes import router as api_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator:
@@ -17,8 +17,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator:
 app = FastAPI(lifespan=lifespan)
 app.include_router(
     api_router,
-    prefix=settings.api.prefix
+    prefix="/"
 )
+
 
 
 if __name__ == "__main__":
