@@ -1,3 +1,6 @@
+from dataclasses import field
+from uuid import UUID
+
 from pydantic import BaseModel
 
 
@@ -23,7 +26,7 @@ class SourceFileUpdate(BaseModel):
 
 
 class SourceFileResponse(SourceFileBase):
-    id: int
+    id: UUID
     status: str
     error_stage: str | None = None
     error_message: str | None = None
@@ -33,7 +36,9 @@ class SourceFileResponse(SourceFileBase):
     class Config:
         from_attributes = True
 
+class SourceFileResponseList(BaseModel):
+    files: list[SourceFileResponse] = field(default_factory=list)
 
 class SourceFileDelete(BaseModel):
-    id: int
+    id: UUID
     deleted: bool

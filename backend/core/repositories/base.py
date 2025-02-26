@@ -40,7 +40,7 @@ class SQLAlchemyRepository(AbstractRepository):
     model = None
     db_manager = db_manager
 
-    async def create(self, values: dict):
+    async def create(self, values: dict)-> model:
         async with db_manager.session_getter() as session:
             record = self.model(**values)
             session.add(record)
@@ -48,7 +48,7 @@ class SQLAlchemyRepository(AbstractRepository):
             await session.refresh(record)
             return record
 
-    async def delete(self, model_id: UUID):
+    async def delete(self, model_id: UUID)->bool:
         async with db_manager.session_getter() as session:
             stmt = delete(self.model).where(self.model.id == model_id)
             result = await session.execute(stmt)
@@ -68,7 +68,7 @@ class SQLAlchemyRepository(AbstractRepository):
             result = await session.execute(query)
             return result.scalars().all()
 
-    async def get_by_id(self, model_id: UUID):
+    async def get_by_id(self, model_id: UUID)->model:
         async with db_manager.session_getter() as session:
             return await session.get(self.model, model_id)
 
