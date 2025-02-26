@@ -4,7 +4,6 @@ from pydantic import BaseModel
 
 PS = TypeVar("PS", bound=BaseModel)
 
-
 # PS - pydantic schema
 
 class APIResponse(BaseModel, Generic[PS]):
@@ -12,4 +11,4 @@ class APIResponse(BaseModel, Generic[PS]):
     code: int
     status: str
     message: str
-    data: PS | None = None
+    data: PS | None
