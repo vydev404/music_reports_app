@@ -4,7 +4,8 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Query
 
 from api.dependencies import source_file_service
-from core.schemas import APIResponse, SourceFileCreate, SourceFileResponse, SourceFileResponseList, SourceFileDelete
+from core.schemas import APIResponse, SourceFileCreate, SourceFileResponse, SourceFileResponseList, SourceFileDelete, \
+    SourceFileUpdate
 from core.services.source_file import SourceFileService
 
 router = APIRouter(prefix="/files", tags=["Source Files"])
@@ -18,7 +19,7 @@ async def get_by_id(file_id: UUID, service: SourceFileService = Depends(source_f
     return await service.get_by_id(file_id)
 
 @router.get("/", response_model=APIResponse[SourceFileResponseList])
-async def get_many(
+async def get_files(
     limit: int = Query(100, ge=1, le=1000),
     offset: int = Query(0, ge=0),
     last_n: int = Query(0, ge=1, le=50),
@@ -27,6 +28,10 @@ async def get_many(
     if last_n:
         return await service.get_latest(last_n=last_n)
     return await service.get_many(limit, offset)
+
+@router.put("/{file_id}", response_model=APIResponse[SourceFileResponse])
+async def update(file_id:UUID, updates: SourceFileUpdate, service: SourceFileService = Depends(source_file_service)):
+    return await service.update(file_id, updates)
 
 @router.delete("/{file_id}", response_model=APIResponse[SourceFileDelete])
 async def delete(file_id: UUID, service: SourceFileService = Depends(source_file_service)):

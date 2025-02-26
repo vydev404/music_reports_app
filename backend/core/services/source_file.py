@@ -48,9 +48,16 @@ class SourceFileService(BaseService):
         except SQLAlchemyError as e:
             raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
-    async def update(self, model_id: UUID, values: SourceFileUpdate):
+    async def get_with_status(self, status: str) -> SourceFileResponseList:
+        pass
+    async def get_by_hash(self, model_hash: str) -> SourceFileResponse:
+        pass
+
+    async def update(self, model_id: UUID, data: SourceFileUpdate)->SourceFileResponse:
+        values = data.model_dump(exclude_unset=True)
         try:
-            return await self.repository.update(model_id, values)
+            result=  await self.repository.update(model_id, values)
+            return SourceFileResponse.model_validate(result)
         except IntegrityError as e:
             raise HTTPException(status_code=400, detail=f"Integrity error: {str(e)}")
         except SQLAlchemyError as e:
