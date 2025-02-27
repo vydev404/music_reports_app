@@ -3,10 +3,12 @@ from typing import AsyncGenerator
 
 import uvicorn
 from fastapi import FastAPI
+from starlette.middleware import Middleware
 
-from core.config import settings
-from core.models import db_manager
 from api.routes import router as api_router
+from core.models import db_manager
+from middleware.request_middleware import RequestIDMiddleware
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator:
@@ -14,12 +16,12 @@ async def lifespan(app: FastAPI) -> AsyncGenerator:
     yield
     await db_manager.dispose()
 
-app = FastAPI(lifespan=lifespan)
+
+app = FastAPI(lifespan=lifespan,
+              middleware=[Middleware(RequestIDMiddleware)])
 app.include_router(
     api_router,
-    prefix="/"
 )
-
 
 
 if __name__ == "__main__":
