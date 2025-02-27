@@ -1,4 +1,5 @@
 from dataclasses import field
+from datetime import datetime
 from uuid import UUID
 
 from pydantic import BaseModel
@@ -30,11 +31,12 @@ class SourceFileResponse(SourceFileBase):
     status: str
     error_stage: str | None = None
     error_message: str | None = None
-    created_at: str
-    updated_at: str
+    created_at: datetime | None
+    updated_at: datetime | None
 
     class Config:
         from_attributes = True
+        json_encoders = {datetime: lambda v: v.isoformat() if v else None}
 
 
 class SourceFileResponseList(BaseModel):
