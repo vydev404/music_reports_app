@@ -15,7 +15,7 @@ async def create(file_data: SourceFileCreate, request: Request, service: SourceF
     result =   await service.create(file_data)
     return format_response(request, result)
 @router.get("/{file_id}", response_model=APIResponse[SourceFileResponse])
-async def get_by_id(file_id: UUID, request: Request, service: SourceFileService = Depends(source_file_service)):
+async def get_by_id(file_id: int, request: Request, service: SourceFileService = Depends(source_file_service)):
     result =  await service.get_by_id(file_id)
     return format_response(request, result)
 
@@ -37,7 +37,7 @@ async def get_files(
 @router.put("/{file_id}", response_model=APIResponse[SourceFileResponse])
 async def update(
         request: Request,
-        file_id: UUID,
+        file_id: int,
         updates: SourceFileUpdate,
         service: SourceFileService = Depends(source_file_service)
 ):
@@ -48,7 +48,7 @@ async def update(
 @router.delete("/{file_id}", response_model=APIResponse[SourceFileDelete])
 async def delete(
         request: Request,
-        file_id: UUID,
+        file_id: int,
         service: SourceFileService = Depends(source_file_service)
 ):
     result =  await service.delete(file_id)

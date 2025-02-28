@@ -27,7 +27,7 @@ class SourceFileUpdate(BaseModel):
 
 
 class SourceFileResponse(SourceFileBase):
-    id: UUID
+    id: int
     status: str
     error_stage: str | None = None
     error_message: str | None = None
@@ -43,5 +43,5 @@ class SourceFileResponseList(BaseModel):
     files: list[SourceFileResponse] = field(default_factory=list)
 
 class SourceFileDelete(BaseModel):
-    id: UUID
+    id: int
     deleted: bool

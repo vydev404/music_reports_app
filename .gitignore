@@ -175,3 +175,4 @@ cython_debug/
 /_tmp/tmp.py
 /backend/project_structure.txt
 /.vs/slnx.sqlite
+/temp/
