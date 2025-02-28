@@ -12,15 +12,15 @@ class AbstractRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def delete(self, model_id: UUID):
+    async def delete(self, model_id: int):
         raise NotImplementedError
 
     @abstractmethod
-    async def exists(self, model_id: UUID) -> bool:
+    async def exists(self, model_id: int) -> bool:
         raise NotImplementedError
 
     @abstractmethod
-    async def get_by_id(self, model_id: UUID):
+    async def get_by_id(self, model_id: int):
         raise NotImplementedError
 
     @abstractmethod
@@ -32,7 +32,7 @@ class AbstractRepository(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    async def update(self, model_id: UUID, values: dict):
+    async def update(self, model_id: int, values: dict):
         raise NotImplementedError
 
 
@@ -48,14 +48,14 @@ class SQLAlchemyRepository(AbstractRepository):
             await session.refresh(record)
             return record
 
-    async def delete(self, model_id: UUID) -> bool:
+    async def delete(self, model_id: int) -> bool:
         async with db_manager.session_getter() as session:
             stmt = delete(self.model).where(self.model.id == model_id)
             result = await session.execute(stmt)
             await session.commit()
             return result.rowcount > 0
 
-    async def exists(self, model_id: UUID) -> bool:
+    async def exists(self, model_id: int) -> bool:
         async with db_manager.session_getter() as session:
             query = select(self.model).where(self.model.id == model_id)
             result = await session.execute(query)
@@ -68,7 +68,7 @@ class SQLAlchemyRepository(AbstractRepository):
             result = await session.execute(query)
             return result.scalars().all()
 
-    async def get_by_id(self, model_id: UUID) -> model:
+    async def get_by_id(self, model_id: int) -> model:
         async with db_manager.session_getter() as session:
             return await session.get(self.model, model_id)
 
@@ -84,7 +84,7 @@ class SQLAlchemyRepository(AbstractRepository):
             result = await session.execute(query)
             return result.scalars().all()
 
-    async def update(self, model_id: UUID, values: dict):
+    async def update(self, model_id: int, values: dict):
         async with db_manager.session_getter() as session:
             result = await session.get(self.model, model_id)
             for k, v in values.items():

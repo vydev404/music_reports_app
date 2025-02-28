@@ -11,7 +11,7 @@ class BaseService:
     def __init__(self, repository: AbstractRepository):
         self.repository = repository
 
-    async def exists(self, model_id: UUID) -> bool:
+    async def exists(self, model_id: int) -> bool:
         try:
             return await self.repository.exists(model_id)
         except SQLAlchemyError as e:

@@ -20,7 +20,7 @@ class SourceFileService(BaseService):
         except SQLAlchemyError as e:
             raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
-    async def get_by_id(self, model_id: UUID) -> SourceFileResponse:
+    async def get_by_id(self, model_id: int) -> SourceFileResponse:
         try:
             result = await self.repository.get_by_id(model_id)
             if not result:
@@ -54,7 +54,7 @@ class SourceFileService(BaseService):
     async def get_by_hash(self, model_hash: str) -> SourceFileResponse:
         pass
 
-    async def update(self, model_id: UUID, data: SourceFileUpdate) -> SourceFileResponse:
+    async def update(self, model_id: int, data: SourceFileUpdate) -> SourceFileResponse:
         values = data.model_dump(exclude_unset=True)
         try:
             result = await self.repository.update(model_id, values)
@@ -64,7 +64,7 @@ class SourceFileService(BaseService):
         except SQLAlchemyError as e:
             raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
 
-    async def delete(self, model_id: UUID) -> SourceFileDelete:
+    async def delete(self, model_id: int) -> SourceFileDelete:
         try:
             result = await self.repository.delete(model_id)
             return SourceFileDelete(id=model_id, deleted=result)
