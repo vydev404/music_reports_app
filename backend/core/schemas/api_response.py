@@ -1,4 +1,5 @@
 from typing import TypeVar, Generic
+from fastapi import Request
 
 from pydantic import BaseModel
 
@@ -8,7 +9,13 @@ PS = TypeVar("PS", bound=BaseModel)
 
 class APIResponse(BaseModel, Generic[PS]):
     request_id: str
-    code: int
-    status: str
-    message: str
-    data: PS | None
+    message: str| None = None
+    data: PS | None = None
+
+
+def format_response(request: Request, data, message="Success"):
+    return APIResponse(
+        request_id=request.state.request_id,
+        message=message,
+        data=data
+    )
