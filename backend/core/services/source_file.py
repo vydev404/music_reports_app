@@ -43,7 +43,7 @@ class SourceFileService(BaseService):
         try:
             db_result = await self.repository.get_latest(last_n)
             for source_file in db_result:
-                result.files.append(SourceFileResponse.models_validate(source_file))
+                result.files.append(SourceFileResponse.model_validate(source_file))
             return result
         except SQLAlchemyError as e:
             raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
