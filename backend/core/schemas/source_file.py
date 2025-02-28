@@ -31,8 +31,8 @@ class SourceFileResponse(SourceFileBase):
     status: str
     error_stage: str | None = None
     error_message: str | None = None
-    created_at: datetime | None
-    updated_at: datetime | None
+    created_at: datetime | None = None
+    updated_at: datetime | None = None
 
     class Config:
         from_attributes = True
