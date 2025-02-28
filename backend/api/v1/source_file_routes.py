@@ -1,18 +1,26 @@
 # -*- coding: utf-8 -*-
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Request
 
 from api.dependencies import source_file_service
 from core.schemas import APIResponse, SourceFileCreate, SourceFileResponse, SourceFileResponseList, SourceFileDelete, \
-    SourceFileUpdate
+    SourceFileUpdate, format_response
 from core.services.source_file import SourceFileService
 
 router = APIRouter(prefix="/files", tags=["Source Files"])
 
+# @router.post("/", response_model=SourceFileResponse)
+# async def create(file_data: SourceFileCreate, service: SourceFileService = Depends(source_file_service)):
+#     return await service.create(file_data)
 @router.post("/", response_model=APIResponse[SourceFileResponse])
-async def create(file_data: SourceFileCreate, service: SourceFileService = Depends(source_file_service)):
-    return await service.create(file_data)
+async def create(file_data: SourceFileCreate, request: Request, service: SourceFileService = Depends(source_file_service)):
+    result =  await service.create(file_data)
+    return APIResponse(
+        request_id=request.state.request_id,  # Передаємо request_id
+        message="File created successfully",
+        data=result
+    )
 
 @router.get("/{file_id}", response_model=APIResponse[SourceFileResponse])
 async def get_by_id(file_id: UUID, service: SourceFileService = Depends(source_file_service)):
