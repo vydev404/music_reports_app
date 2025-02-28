@@ -4,6 +4,7 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, Query, Request
 
 from api.dependencies import source_file_service
+from core.models.source_file import ProcessingStatus
 from core.schemas import APIResponse, SourceFileCreate, SourceFileResponse, SourceFileResponseList, SourceFileDelete, \
     SourceFileUpdate, format_response
 from core.services.source_file import SourceFileService
@@ -24,11 +25,14 @@ async def get_files(
         request: Request,
         limit: int = Query(100, ge=1, le=1000),
         offset: int = Query(0, ge=0),
-        last_n: int = Query(0, ge=0, le=50),
+        last_n: int = Query(0, le=50),
+        status: ProcessingStatus  = Query(ProcessingStatus.NEW),
         service: SourceFileService = Depends(source_file_service)
 ):
     if last_n:
         result =  await service.get_latest(last_n=last_n)
+    elif status:
+        result = await service.get_with_status(status)
     else:
         result = await service.get_many(limit, offset)
     return format_response(request, result)

@@ -14,7 +14,7 @@ class SourceFileRepository(SQLAlchemyRepository):
             result = await session.execute(query)
             return result.scalar_one_or_none()
 
-    async def get_by_status(self, status: ProcessingStatus = ProcessingStatus.NEW):
+    async def get_by_status(self, status: ProcessingStatus):
         async with db_manager.session_getter() as session:
             query = select(self.model).where(self.model.status == status)
             result = await session.execute(query)
