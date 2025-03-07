@@ -176,3 +176,4 @@ cython_debug/
 /backend/project_structure.txt
 /.vs/slnx.sqlite
 /temp/
+/frontend/
