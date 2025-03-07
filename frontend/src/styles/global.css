@@ -1,0 +1,117 @@
+/* /src/styles/global.css */
+
+/* Скидання стандартних стилів браузера */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Загальні стилі для тіла */
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f4f4f4;
+  color: #333;
+  padding: 20px;
+}
+
+/* Заголовки */
+h1, h2, h3 {
+  margin-bottom: 10px;
+}
+
+/* Кнопки */
+button {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 80%;
+  margin: 0 auto;
+}
+.header-container {
+  display: flex;
+  justify-content: space-evenly;
+  border: 1px solid orangered;
+  background-color: #0056b3;
+  color: #f4f4f4;
+}
+.header-site, .header-nav {
+  border: 1px solid blue;
+  width: 40%;
+}
+.header-site {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.header-nav {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+}
+.header-nav-link {
+  list-style-type: none;
+  text-decoration: none;
+  color: #f4f4f4;
+  width: 20%;
+  text-align: center;
+  height: 20px;
+}
+.header-nav-link:hover {
+  color: white;
+  text-decoration: underline;
+}
+.site-logo {
+  max-width: 150px;
+}
+
+.content {
+  display: flex;
+  flex: 1;
+  border: 1px solid darkred;
+}
+
+.sidebar {
+  width: 200px;
+  background: #f4f4f4;
+  padding: 10px;
+}
+
+.flex-table {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #dddddd;
+  width: 100%;
+}
+.flex-row {
+  display: flex;
+}
+
+.flex-header {
+  background-color: #004080;
+  color: white;
+}
+
+.flex-cell {
+  padding: 10px;
+  border: 1px solid #ddd;
+  flex: 4;
+  text-align: center;
+  overflow-wrap: anywhere;
+}
+.cell-s1 {
+  flex: 1;
+}
