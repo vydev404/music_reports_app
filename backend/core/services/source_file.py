@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
-from uuid import UUID
-
-from fastapi import HTTPException
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError
-
 from core.models.source_file import ProcessingStatus
-from core.schemas import SourceFileResponseList, SourceFileResponse, SourceFileCreate, SourceFileDelete, \
-    SourceFileUpdate
+from core.schemas import (
+    SourceFileCreate,
+    SourceFileDelete,
+    SourceFileResponse,
+    SourceFileResponseList,
+    SourceFileUpdate,
+)
 from core.services.base import BaseService
+from fastapi import HTTPException
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 
 class SourceFileService(BaseService):
@@ -53,7 +55,7 @@ class SourceFileService(BaseService):
         result = SourceFileResponseList()
         try:
             db_result = await self.repository.get_by_status(status)
-            result.files = [SourceFileResponse.model_validate(i) for i in db_result ]
+            result.files = [SourceFileResponse.model_validate(i) for i in db_result]
             return result
         except SQLAlchemyError as e:
             raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
