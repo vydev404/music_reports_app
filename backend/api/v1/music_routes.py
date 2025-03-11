@@ -2,8 +2,15 @@
 from uuid import UUID
 
 from api.dependencies import music_service
-from core.schemas import (APIResponse, MusicCreate, MusicResponse,
-                          MusicResponseList, MusicUpdate, format_response)
+from core.schemas import (
+    APIResponse,
+    MusicCreate,
+    MusicDelete,
+    MusicResponse,
+    MusicResponseList,
+    MusicUpdate,
+    format_response,
+)
 from core.services.music import MusicService
 from fastapi import APIRouter, Depends, Query, Request
 
@@ -22,7 +29,7 @@ async def create(
 
 @router.get("/{music_id}", response_model=APIResponse[MusicResponse])
 async def get_by_id(
-    request: Request, music_id: UUID, service: MusicService = Depends(music_service)
+    request: Request, music_id: int, service: MusicService = Depends(music_service)
 ):
     result = await service.get_by_id(music_id)
     return format_response(request, result)
@@ -56,7 +63,7 @@ async def update(
 
 @router.delete("/{music_id}", response_model=APIResponse[MusicDelete])
 async def delete(
-    request: Request, music_id: UUID, service: MusicService = Depends(music_service)
+    request: Request, music_id: int, service: MusicService = Depends(music_service)
 ):
     result = await service.delete(music_id)
     return format_response(request, result)

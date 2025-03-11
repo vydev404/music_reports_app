@@ -9,7 +9,7 @@ from wavinfo import WavInfoReader
 class MusicData:
     name: str
     artist: str
-    track_name: str
+    title: str
     album: str
     right_holder: str
     path: str
@@ -26,7 +26,7 @@ class MusicData:
         return MusicData(
             name=name,
             artist=artist,
-            track_name=track_name,
+            title=track_name,
             album=album,
             right_holder=right_holder,
             path=path,
@@ -54,7 +54,7 @@ class AudioMetadata:
         return MusicData(
             name=file_path.name.upper(),
             artist=audio_metadata["artist"],
-            track_name=audio_metadata["title"],
+            title=audio_metadata["title"],
             album=audio_metadata["album"],
             right_holder=audio_metadata["technician"],
             path=str(file_path),

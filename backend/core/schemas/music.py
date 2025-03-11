@@ -15,8 +15,12 @@ class MusicCreate(MusicBase):
 
 
 class MusicUpdate(BaseModel):
-    updated_at: datetime
-    is_alive: bool
+    name: str | None = None
+    title: str | None = None
+    artist: str | None = None
+    album: str | None = None
+    right_holder: str | None = None
+    is_alive: bool | None = None
 
 
 class MusicResponse(BaseModel):
