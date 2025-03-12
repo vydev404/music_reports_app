@@ -17,7 +17,7 @@ function Table({ data, columns, headers, onRowClick }) {
         <div key={index} className="flex-row" onClick={() => onRowClick(item)}>
           <div className="flex-cell cell-s1">{index + 1}</div> {/* Відображаємо номер рядка */}
           {columns.map((col) => (
-            <div className={`flex-cell ${item[col] && item[col].length <= 5 ? "cell-s1" : ""}`}  key={col}>{item[col]}</div>
+            <div className='flex-cell' key={col}>{item[col]}</div>
           ))}
         </div>
       ))}

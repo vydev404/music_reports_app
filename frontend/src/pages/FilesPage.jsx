@@ -8,7 +8,7 @@ function FilesPage() {
   const [selectedFile, setSelectedFile] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:8000/v1/files")
+    fetch("http://localhost:8000/api/v1/files")
       .then((response) => response.json())
       .then((data) => setFiles(data.data.files))
       .catch((error) => console.error("Помилка завантаження файлів:", error));
