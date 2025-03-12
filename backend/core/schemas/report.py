@@ -1,12 +1,12 @@
 from datetime import datetime
 from pathlib import Path
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 class ReportBase(BaseModel):
     report_name: str
-    report_file: Path
+    report_file: str
     source_file: int
 
 
@@ -27,3 +27,13 @@ class ReportResponse(ReportBase):
 
     class Config:
         from_attributes = True
+        json_encoders = {datetime: lambda v: v.isoformat() if v else None}
+
+
+class ReportResponseList(BaseModel):
+    reports: list[ReportResponse] = Field(default=list)
+
+
+class ReportDelete(BaseModel):
+    id: int
+    deleted: bool

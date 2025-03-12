@@ -1,7 +1,5 @@
 from dataclasses import field
 from datetime import datetime
-from uuid import UUID
-
 from pydantic import BaseModel
 
 
@@ -41,6 +39,7 @@ class SourceFileResponse(SourceFileBase):
 
 class SourceFileResponseList(BaseModel):
     files: list[SourceFileResponse] = field(default_factory=list)
+
 
 class SourceFileDelete(BaseModel):
     id: int
