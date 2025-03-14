@@ -8,7 +8,7 @@ from core.schemas import (
 )
 from core.services.base import BaseService
 from fastapi import HTTPException
-from proccessing.audio_tools import AudioMetadata
+from utils.audio_tools import AudioMetadata
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 
