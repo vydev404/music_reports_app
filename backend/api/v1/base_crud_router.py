@@ -14,9 +14,9 @@ TDelete = TypeVar("TDelete", bound=BaseModel)
 
 
 class BaseCRUDRouter(Generic[TCreate, TUpdate, TResponse, TResponseList, TDelete]):
-    def __init__(self, prefix: str, tags: list[str], service: Type[BaseService]):
+    def __init__(self, prefix: str, tags: list[str], service_instance: BaseService):
         self.router = APIRouter(prefix=prefix, tags=tags)
-        self.service = service
+        self.service: BaseService = service_instance
 
         @self.router.post("/", response_model=APIResponse[TResponse])
         async def create(
@@ -60,7 +60,7 @@ class BaseCRUDRouter(Generic[TCreate, TUpdate, TResponse, TResponseList, TDelete
 
         @self.router.delete("/{item_id}", response_model=APIResponse[TDelete])
         async def delete(
-            request: Request, item_id: int, service: BaseService = Depends(service)
+            request: Request, item_id: int, service: BaseService = Depends(self.service)
         ):
             result = await service.delete(item_id)
             return format_response(request, result)

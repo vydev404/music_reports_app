@@ -11,4 +11,4 @@ from core.schemas import (
 
 router = BaseCRUDRouter[
     ReportCreate, ReportUpdate, ReportResponse, ReportResponseList, ReportDelete
-](prefix="/reports", tags=["Reports"], service=report_service())
+](prefix="/reports", tags=["Reports"], service_instance=report_service).router

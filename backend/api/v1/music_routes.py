@@ -11,4 +11,4 @@ from core.schemas import (
 
 router = BaseCRUDRouter[
     MusicCreate, MusicUpdate, MusicResponse, MusicResponseList, MusicDelete
-](prefix="/Musics", tags=["Musics"], service=music_service())
+](prefix="/Musics", tags=["Musics"], service_instance=music_service).router

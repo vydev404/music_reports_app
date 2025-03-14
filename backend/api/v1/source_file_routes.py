@@ -1,9 +1,13 @@
 # -*- coding: utf-8 -*-
 from api.dependencies import source_file_service
 from api.v1.base_crud_router import BaseCRUDRouter
-from core.schemas import (SourceFileCreate, SourceFileDelete,
-                          SourceFileResponse, SourceFileResponseList,
-                          SourceFileUpdate)
+from core.schemas import (
+    SourceFileCreate,
+    SourceFileDelete,
+    SourceFileResponse,
+    SourceFileResponseList,
+    SourceFileUpdate,
+)
 
 router = BaseCRUDRouter[
     SourceFileCreate,
@@ -11,7 +15,7 @@ router = BaseCRUDRouter[
     SourceFileResponse,
     SourceFileResponseList,
     SourceFileDelete,
-](prefix="/files", tags=["Source Files"], service=source_file_service()).router
+](prefix="/files", tags=["Source Files"], service_instance=source_file_service).router
 
 # @router.post("/", response_model=APIResponse[SourceFileResponse])
 # async def create(file_data: SourceFileCreate, request: Request, service: SourceFileService = Depends(source_file_service)):
