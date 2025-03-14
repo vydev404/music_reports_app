@@ -23,7 +23,7 @@ class Report(Base):
     used_music: Mapped[list[dict]] = mapped_column(
         JSONB, nullable=True, server_default="[]"
     )
-    # format [
+    # used music format [
     #     {
     #         "id": 1,
     #         "count": 2,
