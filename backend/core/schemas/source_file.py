@@ -4,31 +4,27 @@ from pydantic import BaseModel
 
 
 class SourceFileBase(BaseModel):
-    name: str
-    full_name: str
     path: str
-    hash: str
+    full_name: str
+    name: str
     type: str
+    hash: str | None = None
 
 
-class SourceFileCreate(SourceFileBase):
-    pass
+class SourceFileCreate(BaseModel):
+    path: str
 
 
 class SourceFileUpdate(BaseModel):
+
     path: str | None = None
+    name: str | None = None
     hash: str | None = None
     file_data: dict | None = None
-    status: str | None = None
-    error_stage: str | None = None
-    error_message: str | None = None
 
 
 class SourceFileResponse(SourceFileBase):
     id: int
-    status: str
-    error_stage: str | None = None
-    error_message: str | None = None
     created_at: datetime | None = None
     updated_at: datetime | None = None
 

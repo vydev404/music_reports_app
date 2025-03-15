@@ -1,21 +1,33 @@
 # -*- coding: utf-8 -*-
-from core.models.source_file import ProcessingStatus
+from pathlib import Path
+
 from core.schemas import (
     SourceFileCreate,
     SourceFileDelete,
     SourceFileResponse,
     SourceFileResponseList,
     SourceFileUpdate,
+    SourceFileBase,
 )
 from core.services.base import BaseService
 from fastapi import HTTPException
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+from utils.files_tools import FileUtils as file_utility
 
 
 class SourceFileService(BaseService):
     async def create(self, data: SourceFileCreate) -> SourceFileResponse:
-        values = data.model_dump()
         try:
+            file_path = Path(data.path)
+            print(type(file_path), file_path)
+            file_metadata_object = SourceFileBase.model_validate(
+                file_utility.get_file_metadata(file_path).to_dict()
+            )
+            file_metadata_object.hash = file_utility.calculate_file_hash(file_path)
+            file_in_db = await self.repository.get_by_hash(file_metadata_object.hash)
+            if file_in_db:  # test option for excluding unique constrains error
+                file_metadata_object.hash += "1"
+            values = file_metadata_object.model_dump()
             result = await self.repository.create(values)
             return SourceFileResponse.model_validate(result)
         except IntegrityError as e:
@@ -47,15 +59,6 @@ class SourceFileService(BaseService):
             db_result = await self.repository.get_latest(last_n)
             for source_file in db_result:
                 result.files.append(SourceFileResponse.model_validate(source_file))
-            return result
-        except SQLAlchemyError as e:
-            raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
-
-    async def get_with_status(self, status: ProcessingStatus) -> SourceFileResponseList:
-        result = SourceFileResponseList()
-        try:
-            db_result = await self.repository.get_by_status(status)
-            result.files = [SourceFileResponse.model_validate(i) for i in db_result]
             return result
         except SQLAlchemyError as e:
             raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
