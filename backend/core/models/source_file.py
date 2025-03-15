@@ -1,4 +1,4 @@
-from sqlalchemy import String, JSON, Enum, Text
+from sqlalchemy import String, JSON
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from core.models import Base

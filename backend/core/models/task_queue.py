@@ -27,7 +27,7 @@ class TaskQueue(Base):
         ForeignKey("source_files.id", ondelete="CASCADE")
     )
     source_file: Mapped["SourceFile"] = relationship(
-        "SourceFile", back_populates="reports"
+        "SourceFile", back_populates="tasks"
     )
     status: Mapped[TaskStatus] = mapped_column(
         Enum(TaskStatus), nullable=False, default=TaskStatus.PENDING
