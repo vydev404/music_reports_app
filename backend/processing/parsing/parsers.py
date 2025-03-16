@@ -4,40 +4,8 @@ from abc import ABC
 from pathlib import Path
 from xml.etree import ElementTree
 
-from proccessing.parser.dto import ParsedData, ClipData
+from processing.schemas.dto import ParsedDTO, ClipDTO
 from utils.timecode_converter import TimecodeConverter as tc
-
-
-class ParserManager:
-    """
-    Manages the registration and retrieval of file parsers based on file type.
-    """
-
-    def __init__(self):
-        self.parsers = {}
-
-    def register_parser(self, file_type: str, parser: "BaseParser"):
-        """
-        Registers a parser for a specific file type.
-
-        :param file_type: The type of file the parser handles.
-        :param parser: The parser instance to register.
-        """
-        self.parsers[file_type] = parser
-
-    def get_parser(self, file_type: str):
-        """
-        Retrieves the parser for a specific file type.
-
-        :param file_type: The type of file to parse.
-        :return: The parser instance or None if not found.
-        """
-        if file_type in self.parsers:
-            return self.parsers[file_type]
-        else:
-            raise KeyError(
-                f"Parser manager cannot find parser for file type '{file_type}'"
-            )
 
 
 class BaseParser(ABC):
@@ -47,18 +15,18 @@ class BaseParser(ABC):
 
 class EdlParser(BaseParser):
     """
-    Parses EDL files and converts them into ParsedData format.
+    Parses EDL files and converts them into ParsedDTO format.
     """
 
-    def parse(self, file_path: Path) -> ParsedData:
+    def parse(self, file_path: Path) -> ParsedDTO:
         """
-        Parses an EDL file and extracts relevant data into ParsedData.
+        Parses an EDL file and extracts relevant data into ParsedDTO.
 
         :param file_path: Path to the EDL file.
-        :return: ParsedData instance containing parsed file data.
+        :return: ParsedDTO instance containing parsed file data.
         :raises ParsingError: If an error occurs during parsing.
         """
-        parsed_data = ParsedData()
+        parsed_data = ParsedDTO()
         cached_line = None
         try:
             with open(file_path, "r") as file:
@@ -102,12 +70,12 @@ class EdlParser(BaseParser):
         return parsed_data
 
     @staticmethod
-    def parse_edl_line(line: str) -> bool | ClipData:
+    def parse_edl_line(line: str) -> bool | ClipDTO:
         """
-        Parses a single EDL file line and converts it into ClipData.
+        Parses a single EDL file line and converts it into ClipDTO.
 
         :param line: A line from the EDL file.
-        :return: ClipData instance or False if the line is invalid.
+        :return: ClipDTO instance or False if the line is invalid.
         """
         clean_pattern = r"((?:\d{2}:\d{2}:\d{2}:\d{2}\s*){4})([\w\d_, ]+:?)"
         line = re.sub(clean_pattern, r"\1", line)
@@ -116,7 +84,7 @@ class EdlParser(BaseParser):
         if len(parts) < 8:
             return False
         try:
-            formatted_data = ClipData(
+            formatted_data = ClipDTO(
                 clip_name=parts[1],
                 source_in=tc.timecode_to_frames(parts[4]),
                 source_out=tc.timecode_to_frames(parts[5]),
@@ -132,14 +100,14 @@ class EdlParser(BaseParser):
 
 # XmlParser
 class XmlParser(BaseParser):
-    def parse(self, file_path: Path) -> ParsedData:
+    def parse(self, file_path: Path) -> ParsedDTO:
         """
-        Parses an XML file and returns ParsedData.
+        Parses an XML file and returns ParsedDTO.
 
         :param file_path: Path to the XML file.
-        :return: ParsedData object containing parsed clips information.
+        :return: ParsedDTO object containing parsed clips information.
         """
-        parsed_data = ParsedData()
+        parsed_data = ParsedDTO()
         sequence = None
         try:
             tree = ElementTree.parse(file_path)
@@ -186,7 +154,7 @@ class XmlParser(BaseParser):
                     source_in = int(clip.find("start").text)
                     source_out = int(clip.find("end").text)
 
-                    clip_data = ClipData(
+                    clip_data = ClipDTO(
                         clip_name=clip_name,
                         tc_in=tc_in,
                         tc_out=tc_out,

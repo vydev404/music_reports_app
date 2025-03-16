@@ -13,6 +13,12 @@ class MusicRepository(SQLAlchemyRepository):
             result = await session.execute(query)
             return result.scalar_one_or_none()
 
+    async def get_by_name(self, name: str):
+        async with db_manager.session_getter() as session:
+            query = select(self.model).where(self.model.name == name)
+            result = await session.execute(query)
+            return result.scalar_one_or_none()
+
     async def get_by_right_holder(self, right_holder: str):
         async with db_manager.session_getter() as session:
             query = select(self.model).where(self.model.right_holder == right_holder)
