@@ -49,16 +49,17 @@ class EdlParser(BaseParser):
                     start_tc = start_tc or clip_data.tc_in
                     end_tc = max(end_tc or 0, clip_data.tc_out)
                     # Remove duplicates
-                    if clip_data in parsed_data.data:
+                    if clip_data in parsed_data.items:
                         cached_line = line
                         continue
-                    parsed_data.data.append(clip_data)
+                    parsed_data.items.append(clip_data)
                     cached_line = line
 
                 if start_tc is not None and end_tc is not None:
-                    parsed_data.duration = end_tc - start_tc
-                    parsed_data.timecode = tc.frames_to_timecode(
-                        parsed_data.duration, parsed_data.fps
+                    parsed_data.total_duration["frames"] = end_tc - start_tc
+                    parsed_data.total_duration["timecode"] = tc.frames_to_timecode(
+                        parsed_data.total_duration["frames"],
+                        parsed_data.fps,
                     )
 
         except FileNotFoundError as e:
@@ -84,7 +85,7 @@ class EdlParser(BaseParser):
         if len(parts) < 8:
             return False
         try:
-            formatted_data = ClipDTO(
+            clip_data = ClipDTO(
                 clip_name=parts[1],
                 source_in=tc.timecode_to_frames(parts[4]),
                 source_out=tc.timecode_to_frames(parts[5]),
@@ -93,7 +94,7 @@ class EdlParser(BaseParser):
                 clip_source_file="".join(parts[8:]).upper(),
             )
 
-            return formatted_data
+            return clip_data
         except Exception as e:
             return False
 
@@ -122,14 +123,14 @@ class XmlParser(BaseParser):
             for tag in sequence:
                 value = tag.tag
                 if value == "duration":
-                    parsed_data.duration = int(tag.text)
+                    parsed_data.total_duration["frames"] = int(tag.text)
                 elif value == "rate":
                     parsed_data.fps = int(tag.find("timebase").text)
                 elif value == "media":
                     media_tag = tag
 
-            parsed_data.timecode = tc.frames_to_timecode(
-                parsed_data.duration, parsed_data.fps
+            parsed_data.total_duration["timecode"] = tc.frames_to_timecode(
+                parsed_data.total_duration["frames"], parsed_data.fps
             )
             audio_tracks = media_tag.find("audio").findall("track")
             track_id = 1
@@ -163,10 +164,10 @@ class XmlParser(BaseParser):
                         clip_source_file=clip_name.upper(),
                     )
 
-                    if clip_data in parsed_data.data:
+                    if clip_data in parsed_data.items:
                         continue
 
-                    parsed_data.data.append(clip_data)
+                    parsed_data.items.append(clip_data)
                 track_id += 1
             return parsed_data
 

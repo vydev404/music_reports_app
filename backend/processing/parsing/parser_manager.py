@@ -1,4 +1,3 @@
-
 class ParserManager:
     """
     Manages the registration and retrieval of file parsers based on file type.
@@ -29,4 +28,3 @@ class ParserManager:
             raise KeyError(
                 f"Parser manager cannot find parsing for file type '{file_type}'"
             )
-
