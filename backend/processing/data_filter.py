@@ -15,8 +15,10 @@ class ParsedDataFilter:
         :return: filtered data objects as FilteredDTO instance
         """
         filtered_data = FilteredDTO.get_from_parsed_data(parsed_data)
+        filtered_data.items["items_in_db"] = list()
+        filtered_data.items["items_not_in_db"] = list()
         unique_clips = {}
-        original_data = parsed_data.data
+        original_data = parsed_data.items
         # remove duplicates by ClipData.source name, and sum all durations
         if not len(original_data):
             raise ValueError("Received empty data object")
@@ -27,18 +29,20 @@ class ParsedDataFilter:
                 unique_clips[clip.clip_source_file] = filtered_clip_data
                 continue
             clip_duration = clip.tc_out - clip.tc_in
-            unique_clips[clip.clip_source_file].duration_in_frames+= clip_duration
-            unique_clips[clip.clip_source_file].count+= 1
-            unique_clips[clip.clip_source_file].duration_in_tc = tc.frames_to_timecode(unique_clips[clip.clip_source_file].duration_in_frames)
-
+            unique_clips[clip.clip_source_file].duration["frames"] += clip_duration
+            unique_clips[clip.clip_source_file].count += 1
+            unique_clips[clip.clip_source_file].duration["timecode"] = (
+                tc.frames_to_timecode(
+                    unique_clips[clip.clip_source_file].duration["frames"]
+                )
+            )
         # check if clip source file contains in music_library, end get additional info about file from db
         for clip in unique_clips:
             db_result = await self.repository.get_by_name(clip)
             if not db_result:
-                filtered_data.data['clips_not_in_db'].append(unique_clips[clip])
+                filtered_data.items["items_not_in_db"].append(unique_clips[clip])
             clip_data = unique_clips[clip]
-            clip_data.in_db = True
             music_info = MusicDTO.get_from_query(db_result)
-            clip_data.file_info = music_info
-            filtered_data.data['clips_in_db'].append(clip_data)
+            clip_data.clip_info = music_info
+            filtered_data.items["items_in_db"].append(clip_data)
         return filtered_data
