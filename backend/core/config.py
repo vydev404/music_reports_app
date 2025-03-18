@@ -1,11 +1,13 @@
 from pydantic import BaseModel, PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+
 class AppRunConfig(BaseModel):
     host: str = "0.0.0.0"
     port: int = 8080
     debug: bool = False
     reload: bool = True
+
 
 class ApiPrefixConfig(BaseModel):
     version: str = "v1"
@@ -13,7 +15,7 @@ class ApiPrefixConfig(BaseModel):
 
 
 class DatabaseConfig(BaseModel):
-    url: PostgresDsn #= f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
+    url: PostgresDsn  # = f"postgresql+asyncpg://{self.DB_USER}:{self.DB_PASS}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
     url_sync: PostgresDsn
     echo: bool = True
     echo_pool: bool = False
@@ -27,16 +29,26 @@ class DatabaseConfig(BaseModel):
         return str(self.url_sync)
 
 
+class ReportGeneratorConfig(BaseModel):
+    template: str = "processing/report_template.xlsx"
+    output_dir: str = "data/reports"
+
+
+class ProcessingConfig(BaseModel):
+    allowed_filetypes: list[str]
+
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
         case_sensitive=False,
         env_prefix="APP__",
-        env_nested_delimiter="__"
+        env_nested_delimiter="__",
     )
     app: AppRunConfig = AppRunConfig()
     api: ApiPrefixConfig = ApiPrefixConfig()
     db: DatabaseConfig
+    report: ReportGeneratorConfig = ReportGeneratorConfig()
+
 
 settings = Settings()
