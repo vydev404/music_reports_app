@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from dataclasses import dataclass, field, asdict
-from core.models import Music
+from core.models import Music, SourceFile
 
 
 # Base Data Objects
@@ -93,8 +93,19 @@ class UsedMusicDTO:
 class SourceFileDTO:
     id: int
     name: str
-    created: str
+    path: str
+    type: str
+    created: str = None
     data: FilteredDTO | None = None
+
+    @staticmethod
+    def get_from_query(result: SourceFile) -> "SourceFileDTO":
+        return SourceFileDTO(
+            id=result.id,
+            name=result.name,
+            path=result.path,
+            type=result.type,
+        )
 
 
 @dataclass
@@ -103,6 +114,9 @@ class ReportDTO:
     file: str
     source_file_id: int
     used_music: list[dict | None] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, int | str]:
+        return asdict(self)
 
     # used music format [
     #     {
