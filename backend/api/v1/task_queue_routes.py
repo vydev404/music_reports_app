@@ -51,12 +51,12 @@ async def get_files(
     return format_response(request, result)
 
 
-@router.get("/", response_model=APIResponse[TaskQueueResponseList])
+@router.get("/pending", response_model=APIResponse[TaskQueueResponseList])
 async def get_pending(
     request: Request,
     service: TaskQueueService = Depends(task_queue_service),
 ):
-    result = await service.
+    result = await service.get_pending()
     return format_response(request, result)
 
 

@@ -66,7 +66,7 @@ class TaskQueueService(BaseService):
     async def get_pending(self) -> TaskQueueResponseList:
         try:
             result = TaskQueueResponseList()
-            db_result = await self.repository.get(limit, offset)
+            db_result = await self.repository.get_pending_tasks()
             result.files = [TaskQueueResponse.model_validate(i) for i in db_result]
             return result
         except SQLAlchemyError as e:
