@@ -50,5 +50,8 @@ class Settings(BaseSettings):
     db: DatabaseConfig
     report: ReportGeneratorConfig = ReportGeneratorConfig()
 
+    def get_api_url(self):
+        return f"http://{self.app.host}:{self.app.port}{self.api.prefix}"
+
 
 settings = Settings()

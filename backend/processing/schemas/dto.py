@@ -107,6 +107,41 @@ class SourceFileDTO:
             type=result.type,
         )
 
+    @staticmethod
+    def from_response(response: dict) -> "SourceFileDTO":
+        return SourceFileDTO(
+            id=response["id"],
+            name=response["name"],
+            path=response["path"],
+            type=response["type"],
+        )
+
+
+@dataclass
+class TaskDTO:
+    source_file_id: int
+    id: int
+    status: str
+    error_stage: str | None
+    error_message: str | None
+    created_at: str
+    updated_at: str
+
+    def to_dict(self) -> dict[str, int | str]:
+        return asdict(self)
+
+    @staticmethod
+    def from_response(response: dict) -> "TaskDTO":
+        return TaskDTO(
+            source_file_id=response["source_file_id"],
+            id=response["id"],
+            status=response["status"],
+            error_stage=response["error_stage"],
+            error_message=response["error_message"],
+            created_at=response["created_at"],
+            updated_at=response["updated_at"],
+        )
+
 
 @dataclass
 class ReportDTO:

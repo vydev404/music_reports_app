@@ -1,50 +1,59 @@
 # -*- coding: utf-8 -*-
 from core.config import settings
-from core.models import TaskQueue, TaskStatus
+from core.models import TaskQueue, TaskStatus, TaskProcessingStage
 
 import requests
 from typing import Optional
 
+from processing.data_filter import ParsedDataFilter
+from processing.parsing.parser_manager import ParserManager
+from processing.report_generator import ReportsGenerator
+from processing.schemas.dto import TaskDTO, SourceFileDTO, ReportDTO
 
-class Processor:
-    def __init__(self, api_url: str = settings.API_URL):
+
+class APIClient:
+    def __init__(self, api_url: str = settings.get_api_url()):
         self.api_url = api_url
 
-    def fetch_tasks(self) -> list[TaskQueue]:
+    def fetch_tasks(self):
         response = requests.get(f"{self.api_url}/tasks/pending")
         response.raise_for_status()
-        return response.json()
+        return [
+            TaskDTO.from_response(data) for data in response.json()["data"]["tasks"]
+        ]
 
     def update_task_status(
         self,
-        task_id: int,
-        status: str,
-        error_stage: Optional[str] = None,
-        error_message: Optional[str] = None,
+        task: TaskDTO,
     ):
-
-        payload = {
-            "status": status,
-            "error_stage": error_stage,
-            "error_message": error_message,
-        }
-        response = requests.put(f"{self.api_url}/tasks/{task_id}", json=payload)
+        payload = dict(
+            status=task.status,
+            error_stage=task.error_stage,
+            error_message=task.error_message,
+        )
+        response = requests.put(f"{self.api_url}/tasks/{task.id}", json=payload)
         response.raise_for_status()
 
-    def get_file(self, file_id: int) -> Optional[dict]:
-
+    def get_source_file_info(self, file_id: int) -> SourceFileDTO:
         response = requests.get(f"{self.api_url}/files/{file_id}")
-        if response.status_code == 200:
-            return response.json()
-        return None
+        return SourceFileDTO.from_response(response.json()["data"])
 
-    def parse_file(self, file_path: str) -> Optional[dict]:
+    def save_report(self, report_data: dict) -> bool:
+        response = requests.post(f"{self.api_url}/reports", json=report_data)
+        return response.status_code == 201
 
-        return {"parsed_data": f"Processed data from {file_path}"}
 
-    def generate_report(self, file: dict, parsed_data: dict) -> Optional[dict]:
-
-        return {"report": f"Report based on {parsed_data}"}
+class Processor:
+    def __init__(
+        self,
+        api_client: APIClient,
+        data_filter: ParsedDataFilter,
+        report_generator: ReportsGenerator,
+        parser_manager: ParserManager,
+    ):
+        self.data_filter = data_filter
+        self.report_generator = report_generator
+        self.parser_manager = parser_manager
 
     def process_task(self, task: dict):
 
