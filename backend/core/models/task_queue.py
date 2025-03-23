@@ -30,9 +30,15 @@ class TaskQueue(Base):
         "SourceFile", back_populates="tasks"
     )
     status: Mapped[TaskStatus] = mapped_column(
-        Enum(TaskStatus), nullable=False, default=TaskStatus.PENDING
+        Enum(TaskStatus, name="task_status"),
+        nullable=False,
+        default=TaskStatus.PENDING,
     )
     error_stage: Mapped[TaskProcessingStage] = mapped_column(
-        Enum(TaskProcessingStage), nullable=True
+        Enum(
+            TaskProcessingStage,
+            name="task_processing_stage",
+        ),
+        nullable=True,
     )
     error_message: Mapped[str | None] = mapped_column(Text, nullable=True)

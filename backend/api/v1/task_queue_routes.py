@@ -26,6 +26,15 @@ async def create(
     return format_response(request, result)
 
 
+@router.get("/pending", response_model=APIResponse[TaskQueueResponseList])
+async def get_pending(
+    request: Request,
+    service: TaskQueueService = Depends(task_queue_service),
+):
+    result = await service.get_pending()
+    return format_response(request, result)
+
+
 @router.get("/{task_id}", response_model=APIResponse[TaskQueueResponse])
 async def get_by_id(
     task_id: int,
@@ -48,15 +57,6 @@ async def get_files(
         result = await service.get_latest(last_n=last_n)
     else:
         result = await service.get_many(limit, offset)
-    return format_response(request, result)
-
-
-@router.get("/pending", response_model=APIResponse[TaskQueueResponseList])
-async def get_pending(
-    request: Request,
-    service: TaskQueueService = Depends(task_queue_service),
-):
-    result = await service.get_pending()
     return format_response(request, result)
 
 

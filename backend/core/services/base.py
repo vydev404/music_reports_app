@@ -23,7 +23,7 @@ class BaseService:
     async def get_latest(self, last_n: int) -> BaseModel:
         pass
 
-    async def update(self, data: BaseModel) -> BaseModel:
+    async def update(self, model_id: int, data: BaseModel) -> BaseModel:
         pass
 
     async def delete(self, model_id: int) -> BaseModel:
