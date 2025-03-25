@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
+from fastapi import APIRouter, Depends, Query, Request
+
 from api.dependencies import music_service
 from core.schemas import (
     APIResponse,
     MusicCreate,
     MusicDelete,
     MusicResponse,
-    MusicResponseList,
     MusicUpdate,
     format_response,
 )
 from core.services.music import MusicService
-from fastapi import APIRouter, Depends, Query, Request
 
 router = APIRouter(prefix="/musics", tags=["Music"])
 
@@ -33,9 +33,9 @@ async def get_by_id(
     return format_response(request, result)
 
 
-@router.get("/", response_model=APIResponse[MusicResponseList])
 async def get_files(
     request: Request,
+        name: str = Query(default=None),
     limit: int = Query(100, ge=1, le=1000),
     offset: int = Query(0, ge=0),
     last_n: int = Query(0, le=50),
@@ -43,6 +43,8 @@ async def get_files(
 ):
     if last_n:
         result = await service.get_latest(last_n=last_n)
+    elif name:
+        result = await service.get_by_name(name)
     else:
         result = await service.get_many(limit, offset)
     return format_response(request, result)

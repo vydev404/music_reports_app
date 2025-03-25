@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+from fastapi import HTTPException
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
+
 from core.schemas import (
     MusicCreate,
     MusicDelete,
@@ -7,9 +10,7 @@ from core.schemas import (
     MusicUpdate,
 )
 from core.services.base import BaseService
-from fastapi import HTTPException
 from utils.audio_tools import AudioMetadata
-from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 
 
 class MusicService(BaseService):
@@ -27,6 +28,15 @@ class MusicService(BaseService):
     async def get_by_id(self, model_id: int) -> MusicResponse:
         try:
             result = await self.repository.get_by_id(model_id)
+            if not result:
+                raise HTTPException(status_code=404, detail="Item not found")
+            return MusicResponse.model_validate(result)
+        except SQLAlchemyError as e:
+            raise HTTPException(status_code=500, detail=f"Database error: {str(e)}")
+
+    async def get_by_name(self, name: str) -> MusicResponse:
+        try:
+            result = await self.repository.get_by_name(name)
             if not result:
                 raise HTTPException(status_code=404, detail="Item not found")
             return MusicResponse.model_validate(result)
