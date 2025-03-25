@@ -1,13 +1,13 @@
-from core.repositories import MusicRepository
+from processing.processor import APIClient
 from processing.schemas.dto import FilteredDTO, FilteredClipDTO, ParsedDTO, MusicDTO
 from utils.timecode_converter import TimecodeConverter as tc
 
 
 class ParsedDataFilter:
-    def __init__(self, repository: MusicRepository):
-        self.repository = repository
+    def __init__(self, api_client: APIClient):
+        self.api_client = api_client
 
-    async def filter_parsed_data(self, parsed_data: ParsedDTO) -> FilteredDTO:
+    def filter_parsed_data(self, parsed_data: ParsedDTO) -> FilteredDTO:
         """
         Filters parsed data: remove duplicates, count usage, sum usage duration,
          check and fetch music meta from db and return filtered data.
@@ -38,7 +38,7 @@ class ParsedDataFilter:
             )
         # check if clip source file contains in music_library, end get additional info about file from db
         for clip in unique_clips:
-            db_result = await self.repository.get_by_name(clip)
+            db_result = self.api.get_by_name(clip)
             if not db_result:
                 filtered_data.items["items_not_in_db"].append(unique_clips[clip])
             clip_data = unique_clips[clip]

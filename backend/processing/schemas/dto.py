@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from dataclasses import dataclass, field, asdict
+
 from core.models import Music, SourceFile
 
 
@@ -75,6 +76,17 @@ class MusicDTO:
             title=result.title,
             album=result.album,
             right_holder=result.right_holder,
+        )
+
+    @staticmethod
+    def from_response(response: dict) -> "MusicDTO":
+        return MusicDTO(
+            id=response["id"],
+            name=response["name"],
+            title=response["title"],
+            artist=response["title"],
+            album=response["album"],
+            right_holder=response["right_holder"],
         )
 
 
