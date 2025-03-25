@@ -9,6 +9,7 @@ from core.schemas import (
     MusicResponse,
     MusicUpdate,
     format_response,
+    MusicResponseList,
 )
 from core.services.music import MusicService
 
@@ -25,6 +26,16 @@ async def create(
     return format_response(request, result)
 
 
+@router.get("/search", response_model=APIResponse[MusicResponse])
+async def search(
+    request: Request,
+    music_name: str = Query(default=None),
+    service: MusicService = Depends(music_service),
+):
+    result = await service.get_by_name(music_name)
+    return format_response(request, result)
+
+
 @router.get("/{music_id}", response_model=APIResponse[MusicResponse])
 async def get_by_id(
     request: Request, music_id: int, service: MusicService = Depends(music_service)
@@ -33,9 +44,9 @@ async def get_by_id(
     return format_response(request, result)
 
 
+@router.get("/", response_model=APIResponse[MusicResponseList])
 async def get_files(
     request: Request,
-        name: str = Query(default=None),
     limit: int = Query(100, ge=1, le=1000),
     offset: int = Query(0, ge=0),
     last_n: int = Query(0, le=50),
@@ -43,8 +54,6 @@ async def get_files(
 ):
     if last_n:
         result = await service.get_latest(last_n=last_n)
-    elif name:
-        result = await service.get_by_name(name)
     else:
         result = await service.get_many(limit, offset)
     return format_response(request, result)
