@@ -38,11 +38,11 @@ class ParsedDataFilter:
             )
         # check if clip source file contains in music_library, end get additional info about file from db
         for clip in unique_clips:
-            db_result = self.api.get_by_name(clip)
-            if not db_result:
+            result = self.api_client.get_music_info(music_name=clip)
+            if not result:
                 filtered_data.items["items_not_in_db"].append(unique_clips[clip])
             clip_data = unique_clips[clip]
-            music_info = MusicDTO.get_from_query(db_result)
+            music_info = result
             clip_data.clip_info = music_info
             filtered_data.items["items_in_db"].append(clip_data)
         return filtered_data
