@@ -18,7 +18,7 @@ class EdlParser(BaseParser):
     Parses EDL files and converts them into ParsedDTO format.
     """
 
-    def parse(self, file_path: Path) -> ParsedDTO:
+    def parse(self, file_path: str) -> ParsedDTO:
         """
         Parses an EDL file and extracts relevant data into ParsedDTO.
 
@@ -26,6 +26,7 @@ class EdlParser(BaseParser):
         :return: ParsedDTO instance containing parsed file data.
         :raises ParsingError: If an error occurs during parsing.
         """
+        file_path = Path(file_path)
         parsed_data = ParsedDTO()
         cached_line = None
         try:
@@ -101,13 +102,14 @@ class EdlParser(BaseParser):
 
 # XmlParser
 class XmlParser(BaseParser):
-    def parse(self, file_path: Path) -> ParsedDTO:
+    def parse(self, file_path: str) -> ParsedDTO:
         """
         Parses an XML file and returns ParsedDTO.
 
         :param file_path: Path to the XML file.
         :return: ParsedDTO object containing parsed clips information.
         """
+        file_path = Path(file_path)
         parsed_data = ParsedDTO()
         sequence = None
         try:
