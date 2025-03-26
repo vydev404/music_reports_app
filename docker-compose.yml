@@ -1,19 +1,31 @@
+
 services:
-
-  pg15:
-    image: postgres
-    environment:
-      POSTGRES_DB: reports_app
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: password
+  backend:
+    build: ./backend
+    container_name: fastapi_app
+    restart: always
+    env_file: .env
     ports:
-      - "5432:5432"
+      - "8000:8000"
+    networks:
+      - apisrvs
 
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.org
-      PGADMIN_DEFAULT_PASSWORD: admin
-      PGADMIN_CONFIG_SERVER_MODE: 'False'
-    ports:
-      - "5050:80"
+#  frontend:
+#    build: ./frontend
+#    container_name: react_app
+#    restart: always
+#    depends_on:
+#      - backend
+#    ports:
+#      - "3000:3000"
+#    networks:
+#      - frontend
+
+networks:
+  apisrvs:
+    external: true
+#  frontend:
+#    driver: bridge
+#
+#volumes:
+#  pg_data:
