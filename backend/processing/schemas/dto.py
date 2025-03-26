@@ -1,7 +1,21 @@
 # -*- coding: utf-8 -*-
+import enum
 from dataclasses import dataclass, field, asdict
 
-from core.models import Music, SourceFile
+
+class TaskStatus(str, enum.Enum):
+    PENDING = "PENDING"
+    IN_PROGRESS = "IN_PROGRESS"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
+
+
+class TaskProcessingStage(str, enum.Enum):
+    VALIDATING = "VALIDATING"
+    PARSING = "PARSING"
+    FILTERING = "FILTERING"
+    REPORTING = "REPORTING"
+    MOVING = "MOVING"
 
 
 # Base Data Objects
@@ -67,16 +81,16 @@ class MusicDTO:
     album: str | None = None
     artist: str | None = None
 
-    @staticmethod
-    def get_from_query(result: Music) -> "MusicDTO":
-        return MusicDTO(
-            id=result.id,
-            name=result.name,
-            artist=result.artist,
-            title=result.title,
-            album=result.album,
-            right_holder=result.right_holder,
-        )
+    # @staticmethod
+    # def get_from_query(result: Music) -> "MusicDTO":
+    #     return MusicDTO(
+    #         id=result.id,
+    #         name=result.name,
+    #         artist=result.artist,
+    #         title=result.title,
+    #         album=result.album,
+    #         right_holder=result.right_holder,
+    #     )
 
     @staticmethod
     def from_response(response: dict) -> "MusicDTO":
@@ -110,14 +124,14 @@ class SourceFileDTO:
     created: str = None
     data: FilteredDTO | None = None
 
-    @staticmethod
-    def get_from_query(result: SourceFile) -> "SourceFileDTO":
-        return SourceFileDTO(
-            id=result.id,
-            name=result.name,
-            path=result.path,
-            type=result.type,
-        )
+    # @staticmethod
+    # def get_from_query(result: SourceFile) -> "SourceFileDTO":
+    #     return SourceFileDTO(
+    #         id=result.id,
+    #         name=result.name,
+    #         path=result.path,
+    #         type=result.type,
+    #     )
 
     @staticmethod
     def from_response(response: dict) -> "SourceFileDTO":
@@ -125,7 +139,7 @@ class SourceFileDTO:
             id=response["id"],
             name=response["name"],
             path=response["path"],
-            type=response["type"],
+            type=response["type"].strip("."),
         )
 
 

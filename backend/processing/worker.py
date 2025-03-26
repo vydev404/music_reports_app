@@ -1,17 +1,44 @@
 # -*- coding: utf-8 -*-
 import time
-from processing.processor import Processor
+from processing.logger import Logger
+from processing.config import settings
+from processing.data_filter import ParsedDataFilter
+from processing.parsing import PARSERS, ParserManager
+from processing.processor import Processor, APIClient
+from processing.report_generator import ReportsGenerator
+
+log_file = settings.logger.log_dir / "worker.log"
+logger = Logger(log_file)
 
 
 class Worker:
-    def __init__(self, processor: Processor, interval: int = 5):
-        self.processor = processor
+    def __init__(self, api_url: str = settings.api_client.url, interval: int = 5):
+        logger.debug("Initializing worker")
         self.interval = interval
+        self.api_client = APIClient(api_url)
+        self.data_filter = ParsedDataFilter(self.api_client)
+        self.parser_manager = ParserManager()
+        self.report_generator = ReportsGenerator()
+        logger.debug("Register parsers")
+        self.register_parsers()
+
+        logger.debug("Initializing file processor")
+        self.processor = Processor(
+            self.api_client,
+            self.data_filter,
+            self.report_generator,
+            self.parser_manager,
+        )
+        logger.debug(f"Worker initialized successfully. ID: {id(self)}")
+
+    def register_parsers(self):
+        for parser_name, parser_class in PARSERS.items():
+            self.parser_manager.register_parser(parser_name, parser_class())
 
     def run(self):
         while True:
             try:
-                tasks = self.processor.fetch_tasks()
+                tasks = self.processor.get_task_list()
                 if not tasks:
                     time.sleep(self.interval)
                     continue
@@ -26,7 +53,5 @@ class Worker:
 
 
 if __name__ == "__main__":
-    API_URL = "http://localhost:8000/api"
-    processor = Processor(API_URL)
-    worker = Worker(processor, interval=10)
+    worker = Worker()
     worker.run()

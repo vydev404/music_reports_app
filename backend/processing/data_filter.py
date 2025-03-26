@@ -1,10 +1,9 @@
-from processing.processor import APIClient
 from processing.schemas.dto import FilteredDTO, FilteredClipDTO, ParsedDTO, MusicDTO
 from utils.timecode_converter import TimecodeConverter as tc
 
 
 class ParsedDataFilter:
-    def __init__(self, api_client: APIClient):
+    def __init__(self, api_client):
         self.api_client = api_client
 
     def filter_parsed_data(self, parsed_data: ParsedDTO) -> FilteredDTO:
@@ -38,11 +37,10 @@ class ParsedDataFilter:
             )
         # check if clip source file contains in music_library, end get additional info about file from db
         for clip in unique_clips:
-            result = self.api_client.get_music_info(music_name=clip)
-            if not result:
+            music_info = self.api_client.get_music_info(music_name=clip)
+            if not music_info:
                 filtered_data.items["items_not_in_db"].append(unique_clips[clip])
             clip_data = unique_clips[clip]
-            music_info = result
             clip_data.clip_info = music_info
             filtered_data.items["items_in_db"].append(clip_data)
         return filtered_data

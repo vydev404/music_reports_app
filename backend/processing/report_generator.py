@@ -2,7 +2,7 @@
 from pathlib import Path
 
 import openpyxl
-from core.config import settings
+from processing.config import settings
 from processing.schemas.dto import (
     FilteredClipDTO,
     ReportDTO,
