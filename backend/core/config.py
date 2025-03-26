@@ -29,15 +29,6 @@ class DatabaseConfig(BaseModel):
         return str(self.url_sync)
 
 
-class ReportGeneratorConfig(BaseModel):
-    template: str = "processing/report_template.xlsx"
-    output_dir: str = "data/reports"
-
-
-class ProcessingConfig(BaseModel):
-    allowed_filetypes: list[str]
-
-
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -48,7 +39,6 @@ class Settings(BaseSettings):
     app: AppRunConfig = AppRunConfig()
     api: ApiPrefixConfig = ApiPrefixConfig()
     db: DatabaseConfig
-    report: ReportGeneratorConfig = ReportGeneratorConfig()
 
     def get_api_url(self):
         return f"http://{self.app.host}:{self.app.port}{self.api.prefix}"
