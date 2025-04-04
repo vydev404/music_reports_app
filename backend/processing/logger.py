@@ -21,7 +21,9 @@ class Logger:
         # Exclude handlers duplicating
         if not self.logger.hasHandlers():
             # Log format
-            formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
+            formatter = logging.Formatter(
+                "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+            )
             if self.logger_type == "BY_TIME":
                 # File rotation for log files by time
                 file_handler = TimedRotatingFileHandler(
