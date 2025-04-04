@@ -4,7 +4,12 @@
 
 class ErrorMessages:
     APICLIENT_ERRORS = {
-        "not_found": "Error {error} occurred while hashing file: {file}",
+        "FETCH_TASKS_ERROR": "Failed to fetch tasks from API. Error: {error}",
+        "UPDATE_TASK_ERROR": "Failed to update task {task_id}. Error: {error}",
+        "UPDATE_FILE_ERROR": "Failed to update file {file_id}. Error: {error}",
+        "FETCH_FILE_ERROR": "Failed to fetch file info for ID {file_id}. Error: {error}",
+        "FETCH_MUSIC_ERROR": "Failed to fetch music info. Error: {error}",
+        "SAVE_REPORT_ERROR": "Failed to save report. Error: {error}",
     }
     PARSING_ERRORS = {
         "invalid_timecode_format": "Invalid timecode format: '{timecode}' must be 'HH:MM:SS:FF'",
